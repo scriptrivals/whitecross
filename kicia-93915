@@ -61,7 +61,7 @@ Title.Size = UDim2.new(0, 400, 0, 30)
 Title.Position = UDim2.new(0.5, 0, 0.5, 41)
 Title.AnchorPoint = Vector2.new(0.5, 0)
 Title.BackgroundTransparency = 1
-Title.TextSize = 14 -- 🔻 nhỏ lại
+Title.TextSize = 17 -- 🔻 nhỏ lại
 Title.Font = Enum.Font.Arcade
 Title.RichText = true
 Title.Text = "<font letterSpacing=\"4\">Kicia.win</font>"
