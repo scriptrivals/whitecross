@@ -1,0 +1,106 @@
+-- Services
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+-- Player
+local LocalPlayer = Players.LocalPlayer
+while not LocalPlayer do
+	task.wait(0.1)
+	LocalPlayer = Players.LocalPlayer
+end
+
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Remove old GUI if exists
+if PlayerGui:FindFirstChild("YokaiDirect") then
+	PlayerGui.YokaiDirect:Destroy()
+end
+
+-- ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "YokaiDirect"
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
+
+-- Main container
+local MainFrame = Instance.new("Frame")
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.Size = UDim2.new(0, 0, 0, 0)
+MainFrame.BackgroundTransparency = 1
+MainFrame.Parent = ScreenGui
+
+-- Function create crosshair line
+local function createLine()
+	local border = Instance.new("Frame")
+	border.BackgroundColor3 = Color3.new(0, 0, 0)
+	border.BorderSizePixel = 0
+	border.AnchorPoint = Vector2.new(0.5, 0.5)
+	border.ZIndex = 1
+	border.Parent = MainFrame
+
+	local line = Instance.new("Frame")
+	line.BorderSizePixel = 0
+	line.AnchorPoint = Vector2.new(0.5, 0.5)
+	line.ZIndex = 2
+	line.Parent = MainFrame
+
+	return line, border
+end
+
+-- Crosshair lines
+local upLine, upBorder = createLine()
+local downLine, downBorder = createLine()
+local leftLine, leftBorder = createLine()
+local rightLine, rightBorder = createLine()
+
+-- Text label
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0, 400, 0, 30)
+Title.Position = UDim2.new(0.5, 0, 0.5, 41)
+Title.AnchorPoint = Vector2.new(0.5, 0)
+Title.BackgroundTransparency = 1
+Title.TextSize = 14 -- 🔻 nhỏ lại
+Title.Font = Enum.Font.Arcade
+Title.RichText = true
+Title.Text = "<font letterSpacing=\"4\">Kicia.win</font>"
+Title.TextStrokeTransparency = 0.4
+Title.TextStrokeColor3 = Color3.new(0, 0, 0)
+Title.TextColor3 = Color3.new(1,1,1) -- ✅ trắng
+Title.Parent = ScreenGui
+
+-- Animation values
+local timeValue = 0
+local rotationValue = 0
+
+-- Update per frame
+RunService.RenderStepped:Connect(function(dt)
+	if not ScreenGui or not ScreenGui.Parent then return end
+
+	timeValue += dt
+
+	-- Pulse (GIỮ animation nhưng bỏ rainbow)
+	local pulse = (math.sin(timeValue * 5.5) + 1) / 2
+
+	rotationValue += (80 + pulse * 140) * dt
+	MainFrame.Rotation = rotationValue
+
+	local length = 12 + (pulse * 18)
+	local gap = 22 + (pulse * 10)
+	local offset = (length / 2) + (gap / 2)
+
+	local function updateLine(line, border, w, h, x, y)
+		line.Size = UDim2.new(0, w, 0, h)
+		line.Position = UDim2.new(0.5, x, 0.5, y)
+		line.BackgroundColor3 = Color3.new(1,1,1) -- ✅ trắng
+
+		border.Size = UDim2.new(0, w + 1, 0, h + 1)
+		border.Position = line.Position
+	end
+
+	updateLine(upLine, upBorder, 2, length, 0, -offset)
+	updateLine(downLine, downBorder, 2, length, 0, offset)
+	updateLine(leftLine, leftBorder, length, 2, -offset, 0)
+	updateLine(rightLine, rightBorder, length, 2, offset, 0)
+end)
